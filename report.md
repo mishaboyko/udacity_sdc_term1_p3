@@ -44,7 +44,7 @@ I have re-used the CNN architecture, designed by [Nvidia)(https://devblogs.nvidi
 
 Here is a visualization of the architecture:
 
-<img src="/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/cnn-architecture-624x890.png" style="zoom: 50%;" />
+<img src="./examples/cnn-architecture-624x890.png" style="zoom: 50%;" />
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training (80%) and validation (20%) set. 
 
@@ -93,21 +93,21 @@ Training data was chosen to keep the vehicle driving on the road. I used a combi
 
 To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
 
-![](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_13_21_59_955.jpg)
+![](./examples/center_2020_06_07_13_21_59_955.jpg)
 
 I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn how to get back to the perfect line without knowing on how to get off the perfect line. These images show what a recovery looks like:
 
-![](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_14_05_19_070.jpg)
+![](./examples/center_2020_06_07_14_05_19_070.jpg)
 
-![center_2020_06_07_14_05_19_896](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_14_05_19_896.jpg)
+![center_2020_06_07_14_05_19_896](./examples/center_2020_06_07_14_05_19_896.jpg)
 
-![center_2020_06_07_14_05_20_933](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_14_05_20_933.jpg)
+![center_2020_06_07_14_05_20_933](./examples/center_2020_06_07_14_05_20_933.jpg)
 
 To augment the data set, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
 
-![](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_13_42_03_824.jpg)
+![](./examples/center_2020_06_07_13_42_03_824.jpg)
 
-![center_2020_06_07_13_42_03_824_flip](/home/q426889/priv_repo_mboiko/self_driving_car_ND/term1/p3/CarND-Behavioral-Cloning-P3-master/examples/center_2020_06_07_13_42_03_824_flip.jpg)
+![center_2020_06_07_13_42_03_824_flip](./examples/center_2020_06_07_13_42_03_824_flip.jpg)
 
 After the collection process, I had 17682 number of data points. In total, including center, left and right camera images and flipping all of those, the model had bee trained with 84874 images and validated with 21218 images.
 
