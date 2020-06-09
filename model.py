@@ -1,6 +1,9 @@
 import csv
 import cv2
 import numpy as np
+from sklearn.utils import shuffle
+import matplotlib.pyplot as plt
+
 
 # set variables
 lines = []
@@ -79,33 +82,59 @@ y_train = np.array(augmented_measurements)
 
 # Initial Setup for Keras
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda
+from keras.layers.core import Dense, Flatten, Dropout, Lambda
 from keras.layers.convolutional import Convolution2D, Cropping2D
 
-# Fully Connected Neural Network in Keras, taken from Nvidia
+# Fully Connected Neural Network in Keras, inspired by Nvidias CNN
 model = Sequential()
 
-# Preprocessing 1: Normalize the image to the range [0:1]
+# Preprocessing 1: shuffle data
+X_train, y_train = shuffle(X_train, y_train)
+# Preprocessing 2: Normalize the image to the range [0:1]
 model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
-# Preprocessing 2: Chop top and bottom of the image
+# Preprocessing 3: Chop top and bottom of the image
 model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(160,320,3)))
+
 # Layers 1-3: Convolutional layers with 24/36/48 filters, a 5x5 kernel, 2x2 strides and ReLU activation function
 model.add(Convolution2D(24, (5, 5), activation="relu", strides=(2,2)))
 model.add(Convolution2D(36, (5, 5), activation="relu", strides=(2,2)))
 model.add(Convolution2D(48, (5, 5), activation="relu", strides=(2,2)))
-# Layers 4-5: Convolutional layers with 64 filters, a 3x3 kernel and valid padding
+
+# Layer 4: Dropout layer with the probability of 0.2 to drop the nodes.
+model.add(Dropout(0.2))
+
+# Layers 5-6: Convolutional layers with 64 filters, a 3x3 kernel and valid padding
 model.add(Convolution2D(64, (3, 3), activation="relu"))
 model.add(Convolution2D(64, (3, 3), activation="relu"))
-# Layers 6: Flatting
+
+# Layer 7: Flatting
 model.add(Flatten())
-# Layer 7-10: Dense() with an output width of 100/50/10/1.
-model.add(Dense(100))
-model.add(Dense(50))
+
+# Layers 8-9: Dense() with an output width of 100/50.
+# without non-linearity the network is just a linear classifier and not able to acquire nonlinear relationships.
+# ReLU activation function in the Dense layer provides the necessary non-linearity.
+model.add(Dense(100, activation="tanh"))
+model.add(Dense(50, activation="tanh"))
+
+# Layer 10: Dropout layer with the probability of 0.2 to drop the nodes.
+model.add(Dropout(0.2))
+
+# Layers 11-12: Dense() with an output width of 10/1.
 model.add(Dense(10))
 model.add(Dense(1))
 
 model.compile(optimizer='adam', loss='mse')
-model.fit(X_train, y_train, epochs=5, shuffle=True, validation_split=0.2)
+history_object = model.fit(X_train, y_train, epochs=6, shuffle=True, validation_split=0.2, verbose=1)
 
 model.save('model.h5')
+
+### plot the training and validation loss for each epoch
+plt.plot(history_object.history['loss'])
+plt.plot(history_object.history['val_loss'])
+plt.title('model mean squared error loss')
+plt.ylabel('mean squared error loss')
+plt.xlabel('epoch')
+plt.legend(['training set', 'validation set'], loc='upper right')
+plt.show()
+
 exit()

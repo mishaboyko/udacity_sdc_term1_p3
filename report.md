@@ -38,44 +38,49 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### Design Approach
 
-The overall strategy for deriving a model architecture was to chop irrelevant part of the environment and squeeze out the most out of the images by applying 5 convolutional layers with different filter kernels and paddings.
+The overall strategy for deriving a model architecture was to chop out the irrelevant part of the environment and squeeze out the most out of the images by applying 5 convolutional layers with different filter kernels and paddings, followed by 4 fully-connected layers, resulting in  1 output neuron.
 
-I have re-used the CNN architecture, designed by [Nvidia)(https://devblogs.nvidia.com/deep-learning-self-driving-cars/)
+I've got inspired by the CNN architecture, designed by [Nvidia](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) .
 
-Here is a visualization of the architecture:
+Here is a visualization of the Nvidia's architecture:
 
 <img src="./examples/cnn-architecture-624x890.png" style="zoom: 50%;" />
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training (80%) and validation (20%) set. 
+In order to gauge how well the model was working, I split my image and steering angle data into a training (80%) and validation (20%) set (model.py lines 126). Besides, I shuffle the data before every training (model.py line 92).
 
 I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I reduced the number of epochs to 5.
+To combat the overfitting, I did two things:
+
+* Added two Dropout layers with 20% dropout rate. One layer detween 3rd and 4th convolutional layers and the second one between 2nd and 3rd fully-connected layers.
+
+- I have set the number of epochs to 6, in order to strengthen the learning rate of the model with reduced amount of nodes due to dropout layer.
 
 #### Model Architecture in Detail
 
-The final model architecture (model.py lines 89-110) consist of preprocessing, data processing, trainging and saving the model.
+The final model architecture (model.py lines 94-129) consist of preprocessing, data processing, training and saving the model.
 
 ##### Preprocessing
 
-1. Images are normalized in the model using a Keras lambda layer (model.py line 89) 
-2. Top and bottom of the images are chopped to remove noise of the environment (top) and a front of a car (bottom)
+1. Images are shuffled.
+2. Images are normalized in the model using a Keras lambda layer (model.py line 89) 
+3. Top and bottom of the images are chopped to remove noise of the environment (top) and a front of a car (bottom)
 
 ##### CNN Architecture
 
-My model consists of a 3 convolutional layers with 5x5 and 2 convolutional layers with 3x3 filter sizes and depths between 24 and 64 (model.py lines 93-98) 
+The structure of my model is as follows:
 
-The model includes ReLU activation function in the first three convolutional layers to introduce nonlinearity (model.py lines 93-95).
-
-In the 6th layer the model is flattened.
-
-Last 4 fully-connected layers reduce the dencity of the model from 100 to 1 neurons.
+1.  Three convolutional layers with ReLU activation function, 5x5 filter sizes and depths between 24 and 48 (model.py lines 99-101) .
+2.  Dropout layer to teach the model handle inconsistent data (model.py line 104) .
+3.  Two convolutional layers with ReLU activation function, 3x3 filter sizes and depth of 64 (model.py lines 107-108) 
+4.  Flatting layer.
+5.  Two fully-connected layers with tanh activation function to introduce additional nonlinearity between neurons (model.py lines116-117).
+6.  Dropout layer to teach the model handle inconsistent data (model.py line 104) .
+7.  Final two fully-connected layers resulting in 1 output node.
 
 #### Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 107).
-
-
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 126).
 
 ### Training Strategy
 
@@ -113,4 +118,8 @@ After the collection process, I had 17682 number of data points. In total, inclu
 
 #### Training Process
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by validation loss after every epoch run. I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 6 as evidenced by validation loss after every epoch run, shown in the graph below:
+
+![](./examples/model_mean_sq_err_loss.png)
+
+I used an adam optimizer so that manually training the learning rate wasn't necessary.
